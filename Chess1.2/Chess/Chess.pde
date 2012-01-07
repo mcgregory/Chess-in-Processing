@@ -4,13 +4,16 @@ Board board = new Board(squareSize);
 void setup(){
  size( (8*squareSize)+2, (8*squareSize)+2 );
  background(0);
- smooth();
+ smooth(); 
+ board.draw();
   
 }
 void draw(){
-  
- board.draw();
  
+ if(mousePressed){
+     board.mouseClicked();  
+     board.draw();
+ }
  
   
 }

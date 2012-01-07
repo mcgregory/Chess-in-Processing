@@ -4,7 +4,9 @@ public class Piece{
       int pRow;
       boolean pLive = true;
       boolean pWhite;
+      boolean firstMove =true;
       int pType; 
+      int[][] squaresAttacked = new int[21][2];
       //initialize pieces
       Pawn pawn;
       Bishop bishop;
@@ -24,23 +26,23 @@ public class Piece{
               pawn = new Pawn(isWhite,column, row);
              
            } 
-           if(type ==2){
+           else if(type ==2){
               rook = new Rook(isWhite,column, row);
              
            }
-           if(type ==3){
+           else if(type ==3){
               knight = new Knight(isWhite,column, row);
              
            }
-           if(type ==4){
+           else if(type ==4){
               bishop = new Bishop(isWhite,column, row);
              
            }
-           if(type ==5){
+           else if(type ==5){
               queen = new Queen(isWhite,column, row);
              
            }
-           if(type ==6){
+           else if(type ==6){
               king = new King(isWhite,column, row);
              
            }
@@ -69,15 +71,62 @@ public class Piece{
        }
        
        void setColumn(int column){
-         if( pLive ){
+           if(pType ==1){
+              pawn.column = column;
+             
+           } 
+           else if(pType ==2){
+              rook.column = column;
+             
+           }
+           else if(pType ==3){
+              knight.column = column;
+             
+           }
+           else if(pType ==4){
+              bishop.column = column;
+             
+           }
+           else if(pType ==5){
+              queen.column = column;
+             
+           }
+           else if(pType ==6){
+              king.column = column;
+             
+           }
            pColumn = column;
-         }
+           firstMove=false;
        }
       
        void setRow(int row){
-         if( pLive ){
+           if(pType ==1){
+              pawn.row = row;
+             
+           } 
+           else if(pType ==2){
+              rook.row = row;
+             
+           }
+           else if(pType ==3){
+              knight.row = row;
+             
+           }
+           else if(pType ==4){
+              bishop.row = row;
+             
+           }
+           else if(pType ==5){
+              queen.row = row;
+             
+           }
+           else if(pType ==6){
+              king.row = row;
+             
+           }
+         
            pRow = row;
-         }
+           firstMove=false;
        }
       
        void setType(int type){
@@ -88,7 +137,6 @@ public class Piece{
        void setLive(boolean live){
           pLive = live;
        }
-       
        
        //kill or end piece:
        void end(){
@@ -103,23 +151,23 @@ public class Piece{
               return pawn.getInitialx();
              
            } 
-          if(pType ==2){
+           else if(pType ==2){
               return rook.getInitialx();
              
            }
-           if(pType ==3){
+           else if(pType ==3){
               return knight.getInitialx();
              
            }
-           if(pType ==4){
+           else if(pType ==4){
               return bishop.getInitialx();
              
            }
-           if(pType ==5){
+           else if(pType ==5){
               return queen.getInitialx();
              
            }
-           if(pType ==6){
+           else if(pType ==6){
               return king.getInitialx();
              
            }else{
@@ -132,23 +180,23 @@ public class Piece{
               return pawn.getInitialy();
              
            } 
-          if(pType ==2){
+           else if(pType ==2){
               return rook.getInitialy();
              
            }
-           if(pType ==3){
+           else if(pType ==3){
               return knight.getInitialy();
              
            }
-           if(pType ==4){
+           else if(pType ==4){
              return bishop.getInitialy();
              
            }
-           if(pType ==5){
+           else if(pType ==5){
               return queen.getInitialy();
              
            }
-           if(pType ==6){
+           else if(pType ==6){
               return king.getInitialy();
              
            }else{
@@ -163,23 +211,23 @@ public class Piece{
               pawn.drawPawn(check,i,j);
              
            } 
-          if(pType ==2){
+           else if(pType ==2){
               rook.drawRook(check,i,j);
              
            }
-           if(pType ==3){
+           else if(pType ==3){
               knight.drawKnight(check,i,j);
              
            }
-           if(pType ==4){
+           else if(pType ==4){
               bishop.drawBishop(check,i,j);
              
            }
-           if(pType ==5){
+           else if(pType ==5){
               queen.drawQueen(check,i,j);
              
            }
-           if(pType ==6){
+           else if(pType ==6){
               king.drawKing(check,i,j);
              
            }

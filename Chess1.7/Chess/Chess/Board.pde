@@ -17,11 +17,14 @@ public class Board {
        boolean booUndo = false;
        boolean whiteTurn = true;
        boolean clickedYet, selected, showCheck, attackSetYet, resetOn = false;
+       boolean doPop = false;
        
        String wpts = "WPts: ";
        String bpts = "BPts: ";
            
-       public Board(int squareSize) { //const.
+       //const.    
+       public Board(int squareSize) { 
+               
                
                  if(squareSize > 0) {
                    squSize = squareSize;
@@ -85,20 +88,37 @@ public class Board {
        }
 //---------------------------------------------------------------------------------------------------
        //draw method being called in Chess 
-       void draw(){    
-         
-              stroke(20);
+       void draw(){ 
+              //this is a translate and rotate to change view for black
+              
+              if (!whiteTurn && !doPop){
+                    pushMatrix();
+                      // move the origin to the pivot point
+                    translate(8*squSize, 8*squSize); 
+      
+                    // then pivot the grid
+                    rotate(radians(180));
+                    doPop = true;
+              }
+               //draw empty board
+               drawBoardEmpty();
                
-              for ( int i=0; i<8; i++ ) {
-                   for ( int j=0; j<8; j++ ) {
-                         drawEmpty(i,j);
-                         
-                         rect( (i*squSize), (j*squSize), squSize, squSize);
-                         // Draw a piece if there is one there.
-                         if( !isEmptyAt(i, j) ){
-                               drawPieces(i,j);
-                         } 
-                     }
+               //if selection then highlight
+               if (selx !=-1 && firstClickPN != -1){
+                   highlight(selx,sely);
+                   hltPossMoves(firstClickPN);
+               }
+               
+               if(doPop){ 
+                  
+                  popMatrix(); 
+                  //draw pieces with doPop still true
+                  drawBoardPieces();
+                  doPop = !doPop;
+               }else{
+                 
+                 //draw pieces on board 
+                 drawBoardPieces(); 
                }
                //set up a restart/reset box:
                 fill(50);
@@ -138,11 +158,6 @@ public class Board {
                    display("CHECK!"); 
                }
                
-               //if selection then highlight
-               if (selx !=-1 && firstClickPN != -1){
-                   highlight(selx,sely);
-                   hltPossMoves(firstClickPN);
-               }
                if(whiteTurn){
                  displayWhosTurn("White's Move");
                }else{
@@ -151,12 +166,40 @@ public class Board {
                
                
                //printing which pieces are alive:
-               /*
+               
                for (int r =0; r<32;r++){
                  println("Piece Number: "+r+ "; Alive?: " + pieces[r].pLive + "; at: " +pieces[r].getColumn() + "," + pieces[r].getRow());
                }
-               */
+               
+               //this is a translate and rotate to change view for black
+              
        }       
+//--------------------------------------------------------------------------------------------------- 
+void drawBoardEmpty(){
+  
+            stroke(20);
+            for ( int i=0; i<8; i++ ) {
+                 for ( int j=0; j<8; j++ ) {
+                       drawEmpty(i,j);
+                       rect( (i*squSize), (j*squSize), squSize, squSize);
+                   }
+             }
+  
+}
+void drawBoardPieces(){
+  
+            stroke(20);
+            for ( int i=0; i<8; i++ ) {
+                 for ( int j=0; j<8; j++ ) {
+                       
+                       // Draw a piece if there is one there.
+                       if( !isEmptyAt(i, j) ){
+                            drawPieces(i,j);
+                       } 
+                   }
+             }
+}
+
 //--------------------------------------------------------------------------------------------------- 
 //Reset method:
       public void reset(){
@@ -312,9 +355,15 @@ public class Board {
       }   
       public void drawPieces(int column,int row){
             if( getPieceNum(column,row) != -1  ){ 
-                pieces[getPieceNum(column,row)].drawPiece(squSize,column,row);      
+                if(doPop){
+                    //rotate(radians(180));
+                    pieces[getPieceNum(column,row)].drawPiece(squSize,(7-column),(7-row)); 
+                    //rotate(radians(180));   
+                }else{
+                    pieces[getPieceNum(column,row)].drawPiece(squSize,column,row);  
+                }  
             }else{
-                //drawEmpty(column, row);
+                drawEmpty(column, row);
             }
        }
       public int getPieceNum(int column, int row){ 
@@ -1110,8 +1159,7 @@ public class Board {
                    }
                    if(pieceNum != -1){
                         //pieceNum attacked needs it's life back
-                        pieces[pieceNum].setRow(y);
-                        pieces[pieceNum].setColumn(x);  
+                        pieces[pieceNum].bringLife(); 
                    }                     
                return okToMove;
        }
@@ -1182,7 +1230,7 @@ public class Board {
                                           showCheck = false;
                                           display("Checkmate!");
                                           println("checkmate");
-                                          text("Checkmate", (8*squSize)+5, (7*squSize)+squSize/4, squSize, squSize/3 );
+                                          //text("Checkmate", (8*squSize)+5, (7*squSize)+squSize/4, squSize, squSize/3 );
                                       }
                                   }
                                   else{
@@ -1291,7 +1339,7 @@ public class Board {
 
        //called after a mouse click in Chess 
        public void mouseClicked() {
-          
+                
                 //set up a clean text box:
                 fill(150);
                 stroke(225);
@@ -1302,19 +1350,35 @@ public class Board {
                 int y = int(mouseY/squSize);
                 int ybythree = int(mouseY/(squSize/3));
                 println(int(mouseY/(squSize/3)));
+                
+                //this is a translate and rotate to change view for black
+                if (!whiteTurn && !doPop){
+                    pushMatrix();
+                      // move the origin to the pivot point
+                    translate(8*squSize, 8*squSize); 
+      
+                    // then pivot the grid
+                    rotate(radians(180));
+                    doPop = true;
+                }
+                if(doPop){
+                   x = 7 - x;
+                   y = 7 - y;
+                } 
+                
                 //did user select to reset?
-                if(resetOn == false && x == 8 && ybythree  == 22){
+                if(resetOn == false && int(mouseX/squSize) == 8 && ybythree  == 22){
                          resetOn = true;
                 }
-                else if (x == 8 && ybythree  == 22){
+                else if (int(mouseX/squSize) == 8  && ybythree  == 22){
                      reset(); 
                      resetOn= false;
                 }
-                else if (!booUndo && x == 8 && ybythree == 23){
+                else if (!booUndo && int(mouseX/squSize) == 8  && ybythree == 23){
                      booUndo = true;
                      println("click on undo");
                 }
-                else if (booUndo && x == 8 && ybythree == 23){
+                else if (booUndo && int(mouseX/squSize) == 8   && ybythree == 23){
                      undoMove(); 
                      resetOn = false;
                      println("click on undo2");
@@ -1400,7 +1464,14 @@ public class Board {
                                   rect( (8*squSize)+3, (1.5*squSize), squSize -6, 5*squSize);
                                 
                               }
-                }                
+                }
+                //this is a translate and rotate to change view for black
+                
+               if(doPop){
+                  popMatrix(); 
+                  doPop = !doPop;
+               }         
+               
        }
 //-----------------------------------------------------------------------------------------------------
 
